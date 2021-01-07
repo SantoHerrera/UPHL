@@ -1,33 +1,44 @@
-function myFunction() {
+var app = SpreadsheetApp;
+var ss = app.getActiveSpreadsheet();
+var activeSheet = ss.getActiveSheet();
 
-  var app = SpreadsheetApp;
-  var ss = app.getActiveSpreadsheet();
-  var activeSheet = ss.getActiveSheet();
 
-  var tempText = activeSheet.getRange(1, 1).getValue();
+function setNewNames(newNames, rowStart, column) {
 
-  activeSheet.getRange(1, 2).setValue(tempText)
+  for (let i = 0; i < newNames.length; i++) {
+    activeSheet.getRange(rowStart + i, column).setValue(newNames[i])
+  }
+}
+
+function getNewNames(rowStart, rowEnd, column) {
 
   let fuck = [];
 
+  for (let i = 0; i < rowEnd; i++) {
+
+    let name = activeSheet.getRange(i + rowStart, column).getValue();
 
 
 
-  let fuckit = activeSheet.getRange(3, 1, 8, 1).getValues();
-
-  for (let i = 0; i < fuckit.length; i++) {
-    for (let j = 0; j < fuckit[i].length; j++) {
-      let newString = "";
-      newString = newString + fuckit[i][j];
-
-      fuck.push(newString)
+    if (name.length === 0) {
+      continue;
     }
+
+
+    fuck.push(flipName(name))
   }
 
-  fuck.sort()
+  fuck.sort();
 
-  Logger.log(fuck)
 
+  return fuck;
+}
+
+function clearColumn(rowStart, rowEnd, column) {
+
+  var range = activeSheet.getRange(rowStart, column, rowEnd, column);
+
+  range.clear();
 }
 
 function flipName(name) {
@@ -44,16 +55,48 @@ function flipName(name) {
 
   let newFuck = newName.split(" ");
 
+  if (newFuck.length = 1) {
+    return finalName + newFuck[0] + " " + hasParentheses;
+  }
+
+
   finalName = newFuck[1] + " " + newFuck[0] + " " + hasParentheses;
 
   return finalName;
 }
 
+function getNewNames(rowStart, rowEnd, column) {
+  let fuck = [];
 
-function clearColumn(rowStart, rowEnd, column) {
-  var activeSheet = ss.getActiveSheet();
-  var range = activeSheet.getRange(rowStart, column, rowEnd, column);
+  for (let i = 0; i < rowEnd; i++) {
 
-  range.clear()
+    let name = activeSheet.getRange(i + rowStart, column).getValue();
 
+    if (name.length === 0) {
+      continue;
+    }
+
+    fuck.push(flipName(name))
+  }
+
+  fuck.sort()
+
+  return fuck;
 }
+
+
+function main(rowStart, rowEnd, column) {
+  let newNames = getNewNames(rowStart, rowEnd, column);
+
+  clearColumn(rowStart, rowEnd, column);
+
+  setNewNames(newNames, rowStart, column);
+}
+
+function typeHere() {
+  main(0, 0, 0)
+}
+
+
+
+
